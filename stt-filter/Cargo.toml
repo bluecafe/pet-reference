@@ -1,0 +1,8 @@
+[package]
+name = "stt-filter"
+version = "0.1.0"
+edition = "2021"
+description = "로컬 음성 인식 결과를 받아들이기 전에 거르는 최소 예제"
+license = "MIT"
+
+[dependencies]

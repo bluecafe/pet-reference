@@ -1,0 +1,8 @@
+[package]
+name = "store-lock"
+version = "0.1.0"
+edition = "2021"
+description = "대화 기록을 두 프로세스가 동시에 열지 못하게 막고, 삭제는 정확한 확인을 요구하는 최소 예제"
+license = "MIT"
+
+[dependencies]

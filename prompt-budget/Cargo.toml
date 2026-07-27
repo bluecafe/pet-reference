@@ -1,0 +1,8 @@
+[package]
+name = "prompt-budget"
+version = "0.1.0"
+edition = "2021"
+description = "컨텍스트가 좁은 로컬 모델에 넣을 프롬프트를 예산에 맞춰 자르는 최소 예제"
+license = "MIT"
+
+[dependencies]
