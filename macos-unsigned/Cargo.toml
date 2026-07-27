@@ -1,0 +1,8 @@
+[package]
+name = "macos-unsigned"
+version = "0.1.0"
+edition = "2021"
+description = "macOS 격리 속성을 읽고 지우는 최소 예제 — 서명 없이 배포한 앱이 왜 손상됐다고 나오는지"
+license = "MIT"
+
+[dependencies]

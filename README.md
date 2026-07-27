@@ -18,17 +18,26 @@
 
 | 폴더 | 주제 | 상태 |
 | --- | --- | --- |
-| [`stt-filter/`](stt-filter) | 음성 인식 결과에서 환청 걸러내기 | 있음 |
-| [`prompt-budget/`](prompt-budget) | 좁은 컨텍스트에 맞춰 프롬프트 자르기 | 있음 |
-| [`store-lock/`](store-lock) | 기억 파일 잠금과 삭제 확인 | 있음 |
-| [`omok-barks/`](omok-barks) | 결정론으로 캐릭터 대사 고르기 | 있음 |
-| `overlay-window/` | 투명·항상 위·클릭 통과 창 | 예정 |
-| `sprite-sheet/` | 스프라이트 시트 규격과 매니페스트 | 예정 |
-| `asset-pipeline/` | 프레임 정규화와 체크섬 | 예정 |
-| `macos-unsigned/` | 서명 없이 macOS 앱 배포 | 예정 |
-| `size-measure/` | 번들 크기 실측 | 예정 |
+| [`overlay-window/`](overlay-window) | 투명·항상 위·클릭 통과 창 | 9 |
+| [`sprite-sheet/`](sprite-sheet) | 스프라이트 시트 규격과 매니페스트 | 10 |
+| [`asset-pipeline/`](asset-pipeline) | 프레임 정규화와 체크섬 | 10 |
+| [`macos-unsigned/`](macos-unsigned) | 서명 없이 macOS 앱 배포 | 7 |
+| [`size-measure/`](size-measure) | 번들 크기 실측 | 7 |
+| [`stt-filter/`](stt-filter) | 음성 인식 결과에서 환청 걸러내기 | 5 |
+| [`prompt-budget/`](prompt-budget) | 좁은 컨텍스트에 맞춰 프롬프트 자르기 | 5 |
+| [`store-lock/`](store-lock) | 기억 파일 잠금과 삭제 확인 | 3 |
+| [`omok-barks/`](omok-barks) | 결정론으로 캐릭터 대사 고르기 | 6 |
 
-전부 의존성 없이 그 자리에서 돌아갑니다. Rust 예제는 `cargo test`, TypeScript 예제는 Node 22 이상이면 빌드 없이 실행됩니다.
+오른쪽 숫자는 각 폴더의 테스트 수입니다. 전부 합쳐 62개입니다.
+
+## 돌려보기
+
+```bash
+cargo test                                       # Rust 예제
+node --experimental-strip-types --test *.test.ts # TypeScript 예제
+```
+
+**`overlay-window`만 Tauri가 필요합니다.** 창이 실제로 떠야 확인되는 내용이라 어쩔 수 없었고, 대신 판정 로직은 따로 떼어 창 없이도 검증됩니다. 나머지 여덟은 의존성이 없습니다 — Rust는 표준 라이브러리만, TypeScript는 Node 22가 타입을 그대로 실행합니다.
 
 각 폴더에는 그 편의 블로그 글 링크와 실행 방법을 담은 `README.md`가 함께 들어갑니다.
 

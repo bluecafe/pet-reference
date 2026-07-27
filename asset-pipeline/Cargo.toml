@@ -1,0 +1,8 @@
+[package]
+name = "asset-pipeline"
+version = "0.1.0"
+edition = "2021"
+description = "크로마키 배경을 빼고 프레임이 제대로 나왔는지 검사하는 최소 예제"
+license = "MIT"
+
+[dependencies]

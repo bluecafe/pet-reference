@@ -1,0 +1,8 @@
+[package]
+name = "size-measure"
+version = "0.1.0"
+edition = "2021"
+description = "번들에서 무엇이 얼마나 차지하는지 재는 최소 예제 — 감이 아니라 숫자로"
+license = "MIT"
+
+[dependencies]
