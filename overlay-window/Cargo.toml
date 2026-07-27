@@ -1,0 +1,14 @@
+[package]
+name = "overlay-window"
+version = "0.1.0"
+edition = "2021"
+description = "투명하고 항상 위에 있으면서 빈 곳의 클릭은 통과시키는 창의 최소 예제"
+license = "MIT"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# macos-private-api는 macOS에서 투명 창을 켜는 데 필요하다.
+# 이 기능을 쓴 앱은 App Store에 올릴 수 없다 — 그쪽으로 낼 계획이면 다른 길을 찾아야 한다.
+tauri = { version = "2", features = ["macos-private-api"] }

@@ -1,0 +1,105 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>overlay-window example</title>
+<style>
+  /* 투명 창이라 배경을 비운다. 여기에 색을 주면 사각형이 그대로 보인다. */
+  html, body {
+    margin: 0;
+    background: transparent;
+    overflow: hidden;
+    user-select: none;
+  }
+  canvas { display: block; width: 100vw; height: 100vh; }
+
+  /* 캔버스 위에 얹은 UI. 알파값이 0인 자리라 따로 판정해야 한다. */
+  #badge {
+    position: fixed; left: 8px; top: 8px;
+    padding: 4px 8px; border-radius: 6px;
+    background: rgba(20, 20, 20, 0.8); color: #fff;
+    font: 12px/1.4 ui-monospace, monospace;
+  }
+  /* 장식용 레이어. 화면 전체를 덮지만 클릭은 받지 않아야 한다. */
+  #decoration {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+  }
+</style>
+
+<canvas id="stage" width="320" height="320"></canvas>
+<div id="badge">–</div>
+<div id="decoration"></div>
+
+<script type="module">
+  import { Owner, isInsideCanvas, resolveOwner, shouldIgnoreCursor, toCanvasPixel }
+    from "./hit-test.js";
+
+  const appWindow = window.__TAURI__.window.getCurrentWindow();
+  const canvas = document.getElementById("stage");
+  const badge = document.getElementById("badge");
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+  // 캐릭터 대신 도형을 그린다. 구조를 보는 데는 이것으로 충분하고,
+  // 스프라이트는 공개 대상이 아니다.
+  function draw(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const bob = Math.sin(t / 500) * 6;
+    ctx.fillStyle = "#4c8bf5";
+    ctx.beginPath();
+    ctx.arc(160, 170 + bob, 70, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(140, 155 + bob, 9, 0, Math.PI * 2);
+    ctx.arc(180, 155 + bob, 9, 0, Math.PI * 2);
+    ctx.fill();
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+  /** 그 지점의 알파값. 실패하면 null — 통과로 처리하지 않는다. */
+  function alphaAt(clientX, clientY) {
+    const pixel = toCanvasPixel(
+      clientX, clientY, canvas.getBoundingClientRect(), canvas.width, canvas.height,
+    );
+    if (!isInsideCanvas(pixel, canvas.width, canvas.height)) return 0;
+    try {
+      return ctx.getImageData(pixel.x, pixel.y, 1, 1).data[3];
+    } catch {
+      return null;
+    }
+  }
+
+  let ignoring = null;
+
+  async function update(clientX, clientY) {
+    const styles = document
+      .elementsFromPoint(clientX, clientY)
+      .filter((element) => element !== canvas && element !== document.documentElement
+        && element !== document.body)
+      .map((element) => getComputedStyle(element));
+
+    const owner = resolveOwner(styles, alphaAt(clientX, clientY));
+    const ignore = shouldIgnoreCursor(owner);
+
+    // 값이 바뀔 때만 호출한다. 커서가 움직일 때마다 IPC를 보내면 낭비다.
+    if (ignore !== ignoring) {
+      ignoring = ignore;
+      await appWindow.setIgnoreCursorEvents(ignore);
+    }
+    badge.textContent = owner === Owner.PASS_THROUGH ? "통과 (뒤 창이 받는다)"
+      : owner === Owner.UI ? "UI가 받는다" : "캐릭터가 받는다";
+  }
+
+  window.addEventListener("pointermove", (event) => {
+    void update(event.clientX, event.clientY);
+  });
+
+  // 캐릭터를 잡으면 창을 끈다. 네이티브 드래그라 pointerup을 못 받는 경우가
+  // 있는데, 그 처리는 README의 "여기 없는 것"에 적어 뒀다.
+  canvas.addEventListener("pointerdown", async (event) => {
+    if (alphaAt(event.clientX, event.clientY) > 0) {
+      await appWindow.startDragging();
+    }
+  });
+</script>
